@@ -1,6 +1,8 @@
 <script>
 	import '../app.css';
 	import { Toaster } from 'svelte-sonner';
+	import { inject } from '@vercel/analytics';
+	inject();
 </script>
 
 <Toaster position="top-center" richColors />
