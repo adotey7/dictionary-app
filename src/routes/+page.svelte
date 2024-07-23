@@ -6,8 +6,12 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { getWord } from '$lib/services/api.js';
+	import { toast } from 'svelte-sonner';
+
+	import Definition from './Definition.svelte';
 
 	export let data;
+	let wordData = null;
 
 	let isLoading = false;
 
@@ -24,10 +28,10 @@
 			isLoading = true;
 
 			try {
-				const data = await getWord($form.search);
-				console.log(data);
+				wordData = await getWord($form.search);
+				$form.search = '';
 			} catch (error) {
-				console.error(error);
+				toast.error(error.message);
 			} finally {
 				isLoading = false;
 			}
@@ -37,7 +41,7 @@
 	};
 </script>
 
-<h1 class=" mb-9 text-center text-4xl font-bold tracking-tight text-gray-700 lg:text-5xl">
+<h1 class="mb-9 mt-4 text-center text-4xl font-bold tracking-tight text-gray-700 lg:text-5xl">
 	Dictionary app
 </h1>
 <p class="mb-7 text-center font-medium text-gray-700 lg:text-2xl">
@@ -72,7 +76,12 @@
 		><p class="pr-24 text-center">{$errors.search}</p></span
 	>{/if}
 
-<div class="mt-14">
-	<h2 class="text-3xl font-bold text-gray-700">Word</h2>
-	<h3 class="mt-2 pl-14 text-xl font-semibold text-yellow-600">Phonetics</h3>
-</div>
+{#if wordData}
+	<div class="mt-14">
+		<h2 class="text-3xl font-bold text-gray-700">{wordData.wordName}</h2>
+		<h3 class="mt-2 pl-14 text-xl font-semibold text-yellow-600">{wordData.phonetic}</h3>
+	</div>
+
+	<!-- Word and phonetics -->
+	<Definition data={wordData} />
+{/if}
